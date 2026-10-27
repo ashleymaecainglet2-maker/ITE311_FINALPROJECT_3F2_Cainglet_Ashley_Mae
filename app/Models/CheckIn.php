@@ -41,4 +41,13 @@ class CheckIn extends Model
     {
         return $this->belongsTo(Subscription::class);
     }
+
+    /**
+     * Scope check-ins to recent scans for a given member to prevent duplicate rapid scans.
+     */
+    public function scopeRecentForMember($query, int $memberId, int $seconds = 30)
+    {
+        return $query->where('member_id', $memberId)
+            ->where('scanned_at', '>=', now()->subSeconds($seconds));
+    }
 }
