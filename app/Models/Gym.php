@@ -108,4 +108,32 @@ class Gym extends Model implements HasName
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Retrieve the operating schedule for the gym.
+     */
+    public function getOperatingSchedule(): array
+    {
+        return $this->settings['schedule'] ?? [
+            'opening_time' => config('fitledger.schedules.default_opening_time', '06:00'),
+            'closing_time' => config('fitledger.schedules.default_closing_time', '22:00'),
+            'operating_days' => config('fitledger.schedules.operating_days', []),
+        ];
+    }
+
+    /**
+     * Check if the gym is currently open based on operating schedule.
+     */
+    public function isOpenNow(): bool
+    {
+        $schedule = $this->getOperatingSchedule();
+        $currentDay = now()->format('l');
+
+        if (! in_array($currentDay, $schedule['operating_days'] ?? [])) {
+            return false;
+        }
+
+        $currentTime = now()->format('H:i');
+        return $currentTime >= $schedule['opening_time'] && $currentTime <= $schedule['closing_time'];
+    }
 }
