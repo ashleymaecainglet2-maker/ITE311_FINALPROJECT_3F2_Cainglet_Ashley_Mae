@@ -123,10 +123,18 @@ class PayMongoService
                         'member_id' => (string) $subscription->member_id,
                         'subscription_id' => (string) $subscription->id,
                         'payment_id' => (string) $payment->id,
+                        'payment_channel' => 'gcash',
+                        'initiated_at' => now()->toIso8601String(),
                     ],
                 ],
             ],
         ];
+
+        Log::info('Initiating PayMongo GCash checkout session', [
+            'reference_number' => $reference,
+            'subscription_id' => $subscription->id,
+            'amount_php' => $payment->amount,
+        ]);
 
         $response = $this->request('post', '/v1/checkout_sessions', $payload);
 

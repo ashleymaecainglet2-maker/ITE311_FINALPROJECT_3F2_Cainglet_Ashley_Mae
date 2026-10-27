@@ -52,8 +52,18 @@ class Payment extends Model
     protected static function booted(): void
     {
         static::creating(function (Payment $payment): void {
-            $payment->reference_number ??= 'FL-'.Str::upper(Str::random(12));
+            $payment->reference_number ??= static::generateGcashReference();
         });
+    }
+
+    public static function generateGcashReference(): string
+    {
+        return 'GCASH-FL-'.now()->format('YmdHis').'-'.Str::upper(Str::random(6));
+    }
+
+    public function isGcash(): bool
+    {
+        return strtolower($this->payment_method ?? '') === 'gcash';
     }
 
     public function member(): BelongsTo
