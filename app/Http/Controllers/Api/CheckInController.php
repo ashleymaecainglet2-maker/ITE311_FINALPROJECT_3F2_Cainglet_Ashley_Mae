@@ -109,6 +109,10 @@ class CheckInController extends Controller
                 'amount_due' => $subscription->amountDue(),
             ] : null,
             'checked_in_at' => $checkIn->scanned_at->toIso8601String(),
+            'scanner' => [
+                'gym' => $gym?->name,
+                'scanner_device_ip' => $request->ip(),
+            ],
         ]);
     }
 
@@ -123,6 +127,7 @@ class CheckInController extends Controller
             'phone' => $member->phone,
             'status' => $member->status->value,
             'gym' => $member->gym?->name,
+            'gym_slug' => $member->gym?->slug,
         ];
     }
 }
